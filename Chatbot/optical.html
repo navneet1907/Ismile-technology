@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Text Recognition Sample</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+
+
+</head>
+<body>
+    <style>
+        button{
+            align-self:center;
+        }
+        .modal-content{
+            width:800px;
+            float:left;
+            align-content: center;
+        }
+    </style>
+
+<script type="text/javascript">
+    function processImage() {
+        // **********************************************
+        // *** Update or verify the following values. ***
+        // **********************************************
+
+        let subscriptionKey = "9260b3ff76b44286b11f9362c1388496" ;
+        var endpoint = "https://opticalcharrecognition.cognitiveservices.azure.com/"
+      //  if (!subscriptionKey) { throw new Error('Please enter your subscription key and endpoint.'); }
+        
+        var uriBase = endpoint + "/vision/v3.0/read/analyze";
+
+        // Display the image.
+        var sourceImageUrl = document.getElementById("inputImage").value;
+        document.querySelector("#sourceImage").src = sourceImageUrl;
+
+
+        // This operation requires two REST API calls. One to submit the image
+        // for processing, the other to retrieve the text found in the image.
+        //
+        // Make the first REST API call to submit the image for processing.
+        $.ajax({
+            url: uriBase,
+
+            // Request headers.
+            beforeSend: function(jqXHR){
+                jqXHR.setRequestHeader("Content-Type","application/json");
+                jqXHR.setRequestHeader("Ocp-Apim-Subscription-Key", subscriptionKey);
+            },
+
+            type: "POST",
+
+            // Request body.
+            data: JSON.stringify({url: sourceImageUrl}),
+        })
+
+        .done(function(data, textStatus, jqXHR) {
+            // Show progress.
+            $("#responseTextArea").val("Image submitted. " +
+                "Waiting 10 seconds to retrieve the recognized text.");
+                
+
+
+            // Note: The response may not be immediately available. Text
+            // recognition is an asynchronous operation that can take a variable
+            // amount of time depending on the length of the text you want to
+            // recognize. You may need to wait or retry the GET operation.
+            //
+            // Wait ten seconds before making the second REST API call.
+            setTimeout(function () {
+                // "Operation-Location" in the response contains the URI
+                // to retrieve the recognized text.
+                var operationLocation = jqXHR.getResponseHeader("Operation-Location");
+
+                // Make the second REST API call and get the response.
+                $.ajax({
+                    url: operationLocation,
+
+                    // Request headers.
+                    beforeSend: function(jqXHR){
+                        jqXHR.setRequestHeader("Content-Type","application/json");
+                        jqXHR.setRequestHeader(
+                            "Ocp-Apim-Subscription-Key", subscriptionKey);
+                    },
+
+                    type: "GET",
+                })
+
+                .done(function(data) {
+                    // Show formatted JSON on webpage.
+                   
+
+ 
+   
+   
+   // }})
+                 console.log(data)
+                 for (var j = 0; j < data.analyzeResult.readResults[0].lines.length; j++){
+                   // $("#responseTextArea").val(JSON.stringify(data, null, 2));
+                   var ocr = $('#responseTextArea1')
+                   ocr.append(data.analyzeResult.readResults[0].lines[j].text + "" + "<br>");
+                }})
+
+                .fail(function(jqXHR, textStatus, errorThrown) {
+                    // Display error message.
+                    var errorString = (errorThrown === "") ? "Error. " :
+                        errorThrown + " (" + jqXHR.status + "): ";
+                    errorString += (jqXHR.responseText === "") ? "" :
+                        (jQuery.parseJSON(jqXHR.responseText).message) ?
+                            jQuery.parseJSON(jqXHR.responseText).message :
+                            jQuery.parseJSON(jqXHR.responseText).error.message;
+                    alert(errorString);
+                });
+            }, 10000);
+        })
+
+        .fail(function(jqXHR, textStatus, errorThrown) {
+            // Put the JSON description into the text area.
+            $("#responseTextArea").val(JSON.stringify(jqXHR, null, 2));
+
+            // Display error message.
+            var errorString = (errorThrown === "") ? "Error. " :
+                errorThrown + " (" + jqXHR.status + "): ";
+            errorString += (jqXHR.responseText === "") ? "" :
+                (jQuery.parseJSON(jqXHR.responseText).message) ?
+                    jQuery.parseJSON(jqXHR.responseText).message :
+                    jQuery.parseJSON(jqXHR.responseText).error.message;
+            alert(errorString);
+        });
+    };
+</script>
+
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">
+    Optical Character Recognition(OCR)
+  </button>
+  
+  <!-- Modal -->
+  <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalCenterTitle">Read text from image</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+           
+            
+            Enter the URL to an image of text, then click
+            the <strong>Read image</strong> button
+            Image to read:
+            <br><br>
+        <input type="text" name="inputImage" id="inputImage" value=""  class="form-control" placeholder="Enter the URL" />
+        <br>
+        <button type="button" class="btn btn-primary"  onclick="processImage()">Read image</button>
+        <br><br>
+
+        <div id="wrapper" style="width:800px; display:table;">
+           
+        <div id="jsonOutput" style="width:400px; display:table-cell;">
+        Response:
+        <br><br>
+        <textarea id="responseTextArea" class="UIInput"
+                  style="width:300px; height:60px;"></textarea>
+         <textarea id="responseTextArea1" class="UIInput"
+                  style="width:300px; height:400px;"></textarea>
+                  
+        </div>
+        <div id="imageDiv" style="width:400px; display:table-cell;">
+            Source image:
+            <br><br>
+            <img id="sourceImage" width="300" />
+            </div>
+        
+      </div>
+       
+      </div>
+    </div>
+  </div>
+
+
+<!--<h1>Read text from image:</h1>
+Enter the URL to an image of text, then click
+the <strong>Read image</strong> button.
+<br><br>
+Endpoint: 
+<input type="text" name="endpoint" id="endpoint" value="" style="width: 300px;"/>
+<div style="margin: 20px;">Example: https://westus2.api.cognitive.microsoft.com</div>
+Subscription Key:    
+<input type="text" name="key" id="key" value="" style="width: 300px;"/>
+<br><br>-->
+
+<!--Image to read:
+<input type="text" name="inputImage" id="inputImage"
+    value="" />
+<button onclick="processImage()">Read image</button>
+<br><br>
+<div id="wrapper" style="width:1020px; display:table;">
+    <div id="jsonOutput" style="width:600px; display:table-cell;">
+        Response:
+        <br><br>
+        <textarea id="responseTextArea" class="UIInput"
+                  style="width:580px; height:40px;"></textarea>
+                  <textarea id="responseTextArea1" class="UIInput"
+                  style="width:580px; height:400px;"></textarea>
+    </div>
+    <div id="imageDiv" style="width:420px; display:table-cell;">
+        Source image:
+        <br><br>
+        <img id="sourceImage" width="400" />
+    </div>
+</div>-->
+
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
+
+</body>
+</html>

@@ -1,0 +1,22 @@
+{
+  "name": "ismile-main",
+  "version": "1.0.0",
+  "description": "",
+  "main": "Login.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@fortawesome/fontawesome-free": "^5.14.0",
+    "@grapecity/spread-excelio": "^13.2.1",
+    "@grapecity/spread-sheets": "^13.2.1",
+    "bootstrap": "^4.5.2",
+    "bootstrap-social": "^5.1.1",
+    "font-awesome": "^4.7.0",
+    "jquery": "^3.5.1",
+    "popper.js": "^1.12.9",
+    "tesseract.js": "^2.0.0-beta.2"
+  }
+}

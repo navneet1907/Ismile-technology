@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+ 
+ <script> 
+function api(){
+
+ console.log("1")
+
+var requestBody = "{\"u_email_id\":\"dexter@gmail.com\",\"u_requested_for\":\"dexter\",\"u_short_description\":\"dexter's description\",\"u_incident_state\":\"2\"}"; 
+console.log("2")
+ 
+
+var client=new XMLHttpRequest();
+client.open("POST","https://dev84846.service-now.com/api/now/import/x_521785_app_name_u_inbound_integration");
+
+console.log("3")
+
+client.setRequestHeader('Accept','application/json');
+client.setRequestHeader('Content-Type','application/json');
+
+console.log("4")
+
+//Eg. UserName="admin", Password="admin" for this code sample.
+client.setRequestHeader('Authorization', 'Basic '+btoa('admin'+':'+'OoYhzjOa2C3D'));
+console.log("5")
+ 
+
+client.onreadystatechange = function() { 
+    if(this.readyState == this.DONE) {
+        // document.getElementById("response").innerHTML=this.status + this.response; 
+        var res=this.response;
+        console.log(this.response);
+        parsedData=JSON.parse(res)
+        alert("You have successfully created an incident with number: "+ parsedData.result.number);
+    }
+}; 
+console.log("6")
+client.send(requestBody)
+console.log("7")
+}
+
+ </script>
+
+
+
+   
+<body>
+<form>
+    <table>
+        <tr>
+            <td>
+                Email:
+            </td>
+            <td>
+                <input type="text" Email="">
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Requested For:
+            </td>
+            <td>
+                <input type="text" Requested For="">
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Short Description:
+            </td>
+            <td>
+                <input type="text" Short Description="">
+            </td>
+        </tr>
+        <tr>
+            <td>
+            Incident State:
+            </td>
+            <td>
+                <input type="text" Incident State="">
+            </td>
+        </tr>
+        <tr>
+           <td>
+              <input type="button" onclick="api()" > 
+              <button onclick="api()">Submit</button>
+           </td>
+               
+               
+        
+        </tr>
+
+ 
+
+</table>
+</form>
+
+ 
+
+</body>
+</html>

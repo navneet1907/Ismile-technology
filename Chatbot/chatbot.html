@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <title>Web Chat: Browser-supported speech</title>
+    <!--
+       Speech functionality is a core feature in Web Chat and does not require the full bundle.
+       You can use either the core bundle or full bundle, depending on your other bot specifications.
+    -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!--
+      This CDN points to the latest official release of Web Chat. If you need to test against Web Chat's latest bits, please refer to pointing to Web Chat's MyGet feed:
+      https://github.com/microsoft/BotFramework-WebChat#how-to-test-with-web-chats-latest-bits
+    -->
+    <script src="https://cdn.botframework.com/botframework-webchat/latest/webchat.js"></script>
+    <style>
+      html,
+      body {
+        height: 100%;
+      }
+      body {
+        margin: 0;
+		background-color: paleturquoise;
+
+      }
+      #webchat {
+        height: 100%;
+        width: 100%;
+      }
+	  
+	  .css-vxvmo6
+	  {
+	  overflow-x: scroll;
+	  display: flex;
+	  flex-direction : row;
+	   font-family: Comic Sans MS
+	  }
+	  .ac-textBlock
+	  {
+	   font-family: cooper;
+	  }
+
+    </style>
+  </head>
+  <body>
+    <div id="webchat" role="main"></div>
+    <script>
+      (async function() {
+	  
+        window.WebChat.renderWebChat(
+          {
+            directLine: window.WebChat.createDirectLine({ token : 'LClctYwctZY.bslfYm74sJFrE7dtG4fga80VgdpRhRX3wGUML207Bks' }),
+            webSpeechPonyfillFactory: window.WebChat.createBrowserWebSpeechPonyfillFactory(),
+          },
+          document.getElementById('webchat')
+        );
+        document.querySelector('#webchat > *').focus();
+      })().catch(err => console.error(err));
+
+    </script>
+  </body>
+</html>
